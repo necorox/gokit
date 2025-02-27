@@ -1,0 +1,17 @@
+FROM golang:1.24-bookworm
+
+WORKDIR /workspace
+
+# `backend/` の全ファイルを `/workspace` にコピー
+COPY backend /workspace
+
+# Airをインストール
+RUN go install github.com/air-verse/air@latest
+
+RUN go mod download
+
+# ポートを開放
+EXPOSE 8081
+
+# 実行
+CMD ["air", "-c", ".air.toml"]

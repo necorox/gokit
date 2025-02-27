@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: necoro_backend
+    restart: always
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+    #   redis:
+    #     condition: service_started
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/necoro_db
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8081:8081"
+    volumes:
+      - ${CONTAINER_WORKSPACE_FOLDER}:/workspaces:cached
+      - /workspace/tmp/
+    working_dir: /workspace
+    # command: [ "air", "-c", ".air.toml" ]
+    command: tail -f /dev/null
