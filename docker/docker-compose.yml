@@ -1,9 +1,11 @@
+version: '3'
+
 services:
   backend:
     build:
       context: ..
       dockerfile: docker/Dockerfile.backend
-    container_name: necoro_backend
+    container_name: gokit_backend
     restart: always
     # depends_on:
     #   postgres:
@@ -14,10 +16,28 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/necoro_db
       REDIS_URL: redis://redis:6379
     ports:
-      - "8081:8081"
+      - "8081:8080"
     volumes:
-      - ${CONTAINER_WORKSPACE_FOLDER}:/workspaces:cached
+      - ../backend:/workspace:cached
       - /workspace/tmp/
     working_dir: /workspace
-    # command: [ "air", "-c", ".air.toml" ]
+    command: [ "air", "-c", ".air.toml" ]
+
+  admin_panel:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.admin_panel
+    container_name: gokit_admin_panel
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3050:3000"
+    tty: true
+    volumes:
+      - ../admin_panel/workspace:cached
+      - /workspace/node_modules
+    working_dir: /workspace
+    # command: sh -c "npm install && npm run dev"
+    # command: [ "npm", "run", "dev" ]
     command: tail -f /dev/null

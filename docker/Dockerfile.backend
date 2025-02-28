@@ -10,8 +10,5 @@ RUN go install github.com/air-verse/air@latest
 
 RUN go mod download
 
-# ポートを開放
-EXPOSE 8081
-
 # 実行
 CMD ["air", "-c", ".air.toml"]
