@@ -7,13 +7,8 @@ services:
       dockerfile: docker/Dockerfile.backend
     container_name: gokit_backend
     restart: always
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
-    #   redis:
-    #     condition: service_started
     environment:
-      DATABASE_URL: postgresql://user:password@postgres:5432/necoro_db
+      DATABASE_URL: postgresql://postgres:postgres@supabase-postgres:5432/postgres
       REDIS_URL: redis://redis:6379
     ports:
       - "8081:8080"
@@ -22,6 +17,8 @@ services:
       - /workspace/tmp/
     working_dir: /workspace
     command: [ "air", "-c", ".air.toml" ]
+    networks:
+      - gokit-network
 
   admin_panel:
     build:
@@ -35,9 +32,14 @@ services:
       - "3050:3000"
     tty: true
     volumes:
-      - ../admin_panel/workspace:cached
+      - ../admin_panel:/workspace:cached
       - /workspace/node_modules
     working_dir: /workspace
-    # command: sh -c "npm install && npm run dev"
-    # command: [ "npm", "run", "dev" ]
-    command: tail -f /dev/null
+    command: [ "npm", "run", "dev" ]
+    networks:
+      - gokit-network
+
+networks:
+  gokit-network:
+    name: gokit-network
+    external: false
