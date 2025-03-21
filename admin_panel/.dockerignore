@@ -1,0 +1,16 @@
+# ログファイルを無視
+*.log
+
+# 依存関係ディレクトリを無視
+node_modules/
+
+# 環境設定ファイルを無視
+# .env
+
+# ビルド時に不要なファイルを無視
+Dockerfile
+.dockerignore
+.git
+.gitignore
+README.md
+LICENSE
