@@ -1,0 +1,67 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    # https://app.vagrantup.com/ubuntu から最適なバージョンを選択
+    config.vm.box = "ubuntu/jammy64"
+
+    # ローカルのディレクトリをsync設定
+    config.vm.synced_folder "../", "/home/vagrant/gokit"
+
+    # ネットワーク設定
+    config.vm.network "private_network", ip: "192.168.33.20"
+    # ポートフォワーディング設定
+    # config.vm.network "forwarded_port", guest: 8080, host: 8080
+    
+    # VMのspec設定（必要に応じて調整）
+    config.vm.provider "virtualbox" do |vb|
+      vb.name = "gokit_dev"
+      vb.memory = "8192"
+      vb.cpus = 4
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+  
+    config.vm.provision "shell", inline: <<-SHELL
+      # dockerのインストール
+      sudo apt-get update
+      sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+      sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      sudo apt-get update
+      sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+      sudo usermod -aG docker vagrant
+  
+      # docker-composeのインストール 
+      sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose 
+      sudo chmod +x /usr/local/bin/docker-compose
+
+      sudo apt-get update -y
+      sudo apt-get upgrade -y
+  
+      # 開発ツールとユーティリティのインストール
+      sudo apt-get install -y build-essential curl git wget unzip
+  
+      # Go 1.24.1のインストール（特定バージョン）
+      wget https://go.dev/dl/go1.24.1.linux-amd64.tar.gz
+      sudo rm -rf /usr/local/go
+      sudo tar -C /usr/local -xzf go1.24.1.linux-amd64.tar.gz
+      echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/vagrant/.profile
+      echo 'export GOPATH=/home/vagrant/go' >> /home/vagrant/.profile
+      echo 'export PATH=$GOPATH/bin:$PATH' >> /home/vagrant/.profile
+      echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> /home/vagrant/.profile
+      echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> /home/vagrant/.profile
+      rm go1.24.1.linux-amd64.tar.gz
+
+      # Goモジュール有効化
+      sudo -u vagrant bash -c 'echo "export GO111MODULE=on" >> ~/.profile'
+      sudo -u vagrant bash -c 'echo "export GOPATH=\$HOME/go" >> ~/.profile'
+      sudo -u vagrant bash -c 'echo "export PATH=\$GOPATH/bin:\$PATH" >> ~/.profile'
+
+      # nodejs 22.14.0 のインストール
+      sudo apt install nodejs npm
+      sudo npm install n -g
+      sudo n 22.14.0
+      sudo apt purge nodejs npm
+      hash -r
+    SHELL
+  end
