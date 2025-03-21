@@ -9,6 +9,7 @@ COPY backend /workspace
 RUN go install github.com/air-verse/air@latest
 
 RUN go mod download
+RUN go mod tidy
 
 # 実行
 CMD ["air", "-c", ".air.toml"]
