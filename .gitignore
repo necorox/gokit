@@ -27,6 +27,23 @@ go.work.sum
 # tmp directory
 tmp/
 
+*.o
+*.a
+*.so
+*.test
+*.prof
+*.out
+
+vendor/
+tmp/
+
+# IDE specific files
+.vscode
+.idea
+
+# build output
+air
+
 ## For Vagrant
 # General
 .vagrant/
