@@ -2,26 +2,41 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+    # プロジェクト名（ホスト/ゲストディレクトリに使う）
+    project_name = "gokit"
+
+    # パス定義
+    host_project_path  = "../"
+    guest_work_path    = "/works/#{project_name}"
+    guest_project_path = "/home/vagrant/#{project_name}"
+
     # https://app.vagrantup.com/ubuntu から最適なバージョンを選択
     config.vm.box = "ubuntu/jammy64"
 
-    # ローカルのディレクトリをsync設定
-    config.vm.synced_folder "../", "/home/vagrant/gokit"
+    # ローカルのディレクトリをマウント
+    config.vm.synced_folder host_project_path, guest_work_path
 
     # ネットワーク設定
     config.vm.network "private_network", ip: "192.168.33.20"
+
     # ポートフォワーディング設定
     # config.vm.network "forwarded_port", guest: 8080, host: 8080
     
     # VMのspec設定（必要に応じて調整）
     config.vm.provider "virtualbox" do |vb|
-      vb.name = "gokit_dev"
+      vb.name = "#{project_name}_dev"
       vb.memory = "8192"
       vb.cpus = 4
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
   
     config.vm.provision "shell", inline: <<-SHELL
+      # 開発用フォルダを作成
+      mkdir -p #{guest_project_path}
+
+      # node_modules を除外して同期
+      rsync -av --delete --exclude='**/node_modules' #{guest_work_path}/ #{guest_project_path}/
+
       # dockerのインストール
       sudo apt-get update
       sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
@@ -63,5 +78,9 @@ Vagrant.configure("2") do |config|
       sudo n 22.14.0
       sudo apt purge nodejs npm
       hash -r
+
+      # バックグラウンドでワークスペースをホストに共有
+      chmod +x /home/vagrant/guest_to_host_sync.sh
+      nohup /home/vagrant/guest_to_host_sync.sh > /home/vagrant/sync.log 2>&1 &
     SHELL
   end
