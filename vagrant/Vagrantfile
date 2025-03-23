@@ -75,12 +75,15 @@ Vagrant.configure("2") do |config|
       sudo -u vagrant bash -c 'echo "export GOPATH=\$HOME/go" >> ~/.profile'
       sudo -u vagrant bash -c 'echo "export PATH=\$GOPATH/bin:\$PATH" >> ~/.profile'
 
-      # nodejs 22.14.0 のインストール
-      sudo apt install nodejs npm
-      sudo npm install n -g
-      sudo n 22.14.0
-      sudo apt purge nodejs npm
-      hash -r
+      # Node.js v22.x のインストール（NodeSource 経由）
+      curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+      sudo apt-get install -y nodejs
+      sudo npm install -g npm
+      sudo npm install -g pnpm
+      # sudo npm install n -g
+      # sudo n 22.14.0
+      # sudo apt purge nodejs npm
+      # hash -r
 
       # バックグラウンドでワークスペースをホストに共有
       chmod +x /home/vagrant/guest_to_host_sync.sh
