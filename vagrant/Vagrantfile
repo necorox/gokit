@@ -30,6 +30,9 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
   
+    # ゲストからホストへの同期用スクリプトをコピー
+    config.vm.provision "file", source: "guest_to_host_sync.sh", destination: "/home/vagrant/guest_to_host_sync.sh"
+
     config.vm.provision "shell", inline: <<-SHELL
       # 開発用フォルダを作成
       mkdir -p #{guest_project_path}
