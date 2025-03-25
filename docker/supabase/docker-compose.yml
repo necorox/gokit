@@ -21,6 +21,8 @@ services:
     depends_on:
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       STUDIO_PG_META_URL: http://meta:8080
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -58,6 +60,8 @@ services:
     depends_on:
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
@@ -90,6 +94,8 @@ services:
         condition: service_healthy
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: 9999
@@ -162,6 +168,8 @@ services:
         condition: service_healthy
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       PGRST_DB_SCHEMAS: ${PGRST_DB_SCHEMAS}
@@ -190,6 +198,8 @@ services:
       timeout: 5s
       interval: 5s
       retries: 3
+    env_file:
+      - ../../.env
     environment:
       PORT: 4000
       DB_HOST: ${POSTGRES_HOST}
@@ -230,6 +240,8 @@ services:
         condition: service_started
       imgproxy:
         condition: service_started
+    env_file:
+      - ../../.env
     environment:
       ANON_KEY: ${ANON_KEY}
       SERVICE_KEY: ${SERVICE_ROLE_KEY}
@@ -259,6 +271,8 @@ services:
       timeout: 5s
       interval: 5s
       retries: 3
+    env_file:
+      - ../../.env
     environment:
       IMGPROXY_BIND: ":5001"
       IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
@@ -277,6 +291,8 @@ services:
         condition: service_healthy
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       PG_META_PORT: 8080
       PG_META_DB_HOST: ${POSTGRES_HOST}
@@ -296,6 +312,8 @@ services:
     depends_on:
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       JWT_SECRET: ${JWT_SECRET}
       SUPABASE_URL: http://kong:8000
@@ -329,6 +347,8 @@ services:
       db:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       LOGFLARE_NODE_HOST: 127.0.0.1
       DB_USERNAME: supabase_admin
@@ -383,6 +403,8 @@ services:
     depends_on:
       vector:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       POSTGRES_HOST: /var/run/postgresql
       PGPORT: ${POSTGRES_PORT}
@@ -416,6 +438,8 @@ services:
       timeout: 5s
       interval: 5s
       retries: 3
+    env_file:
+      - ../../.env
     environment:
       LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
     command: [ "--config", "/etc/vector/vector.yml" ]
@@ -444,6 +468,8 @@ services:
         condition: service_healthy
       analytics:
         condition: service_healthy
+    env_file:
+      - ../../.env
     environment:
       PORT: 4000
       POSTGRES_PORT: ${POSTGRES_PORT}

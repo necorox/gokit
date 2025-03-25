@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   backend:
     build:
@@ -7,9 +5,8 @@ services:
       dockerfile: docker/Dockerfile.backend
     container_name: gokit_backend
     restart: always
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@supabase-postgres:5432/postgres
-      REDIS_URL: redis://redis:6379
+    env_file:
+      - ../.env
     ports:
       - "8081:8080"
     volumes:
@@ -26,6 +23,8 @@ services:
       dockerfile: docker/Dockerfile.admin_panel
     container_name: gokit_admin_panel
     restart: always
+    env_file:
+      - ../.env
     depends_on:
       - backend
     ports:
@@ -39,7 +38,26 @@ services:
     networks:
       - gokit-network
 
+  atlas:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.atlas
+    container_name: atlas
+    volumes:
+      - ../atlas:/app:cached
+      - ../.env:/app/.env:ro
+    working_dir: /app
+    env_file:
+      - ../.env
+    networks:
+      - gokit-network
+    tty: true
+    stdin_open: true
+    # デバッグ用
+    # entrypoint: ""
+    # command: [ "bash" ]
+
 networks:
   gokit-network:
     name: gokit-network
-    external: false
+    external: true

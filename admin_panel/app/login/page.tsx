@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { AlertCircle, ExternalLink, BookOpen, Layers, Code, LayoutDashboard } from "lucide-react"
+import { AlertCircle, ExternalLink, BookOpen, Layers, Code, LayoutDashboard, Database } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from 'next/link'
@@ -58,10 +58,8 @@ export default function LoginPage() {
 
   const demoPages = [
     { name: "gRPC挨拶サービス", path: "/test", icon: <Code className="h-4 w-4 mr-2" /> },
-    { name: "サンプルページ", path: "/sample", icon: <BookOpen className="h-4 w-4 mr-2" /> },
-    { name: "コンポーネント一覧", path: "/components", icon: <Layers className="h-4 w-4 mr-2" /> },
-    { name: "API テスト", path: "/api-test", icon: <ExternalLink className="h-4 w-4 mr-2" /> },
     { name: "ダッシュボード", path: "/dashboard", icon: <LayoutDashboard className="h-4 w-4 mr-2" /> },
+    { name: "supabase studio", path: "http://192.168.33.20:8000", icon: <Database className="h-4 w-4 mr-2" /> },
   ]
 
   return (
