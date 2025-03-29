@@ -38,25 +38,6 @@ services:
     networks:
       - gokit-network
 
-  atlas:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile.atlas
-    container_name: atlas
-    volumes:
-      - ../atlas:/app:cached
-      - ../.env:/app/.env:ro
-    working_dir: /app
-    env_file:
-      - ../.env
-    networks:
-      - gokit-network
-    tty: true
-    stdin_open: true
-    # デバッグ用
-    # entrypoint: ""
-    # command: [ "bash" ]
-
 networks:
   gokit-network:
     name: gokit-network
